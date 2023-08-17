@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import mqtt from "mqtt";
+import * as mqtt from "mqtt";
 
 const CameraCapture: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -10,7 +10,8 @@ const CameraCapture: React.FC = () => {
   const [mqttClient, setMqttClient] = useState<mqtt.MqttClient | null>(null);
   const [mqttConnected, setMqttConnected] = useState(false);
 
-  const mqttBrokerUrl = process.env.MQTT_BROKER_URL || "test.mosquitto.org";
+  const mqttBrokerUrl = process.env.MQTT_BROKER_URL ||
+    "mqtt://test.mosquitto.org";
   const mqttTopic = process.env.MQTT_TOPIC || "image-topic";
 
   const startCamera = async () => {
@@ -38,13 +39,8 @@ const CameraCapture: React.FC = () => {
   };
 
   useEffect(() => {
-    if (mqttClient) {
-      mqttClient.on("connect", () => {
-        setMqttConnected(true);
-      });
-      mqttClient.on("close", () => {
-        setMqttConnected(false);
-      });
+    if (!mqttClient) {
+      connectMqtt();
     }
   }, [mqttClient]);
 
@@ -71,22 +67,23 @@ const CameraCapture: React.FC = () => {
 
   const saveImage = () => {
     if (capturedImage && mqttClient) {
-      connectMqtt();
       mqttClient.publish(mqttTopic, capturedImage);
     }
   };
 
   return (
     <div>
-      <h1>Camera Capture Interface</h1>
+      <h4>Camera Capture Interface</h4>
       <div>
         {mqttConnected
-          ? <div style={{ color: "green" }}>Connected to MQTT</div>
-          : <div style={{ color: "red" }}>Disconnected from MQTT</div>}
+          ? <div style={{ color: "green" }}>&#128994;</div>
+          : <div style={{ color: "red" }}>&#128308;</div>}
         {!cameraStarted && <button onClick={startCamera}>Start Camera</button>}
         {cameraStarted && (
           <>
-            <button onClick={captureImage}>Capture Image</button>
+            <button style={{ marginRight: "110px" }} onClick={captureImage}>
+              Capture Image
+            </button>
             <button onClick={saveImage} disabled={!capturedImage}>Save</button>
           </>
         )}
