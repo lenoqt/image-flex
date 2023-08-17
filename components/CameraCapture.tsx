@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import Image from "next/image";
 
 const CameraCapture: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -42,14 +43,19 @@ const CameraCapture: React.FC = () => {
         {cameraStarted && (
           <>
             <button onClick={captureImage}>Capture Image</button>
-            <p>Click "Capture Image" when ready</p>
+            <p>Click Capture Image when ready</p>
           </>
         )}
       </div>
       <div>
         {capturedImage && (
           <div>
-            <img src={capturedImage} alt="Captured" />
+            <Image
+              src={capturedImage}
+              alt="Captured"
+              width={100}
+              height={100}
+            />
             <a href={capturedImage} download="captured_image.png">
               Download Captured Image
             </a>
