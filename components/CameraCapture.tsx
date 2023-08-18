@@ -1,18 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
-import * as mqtt from "mqtt";
+import { MqttImageSender, UploadRequest } from "./interfaces/ImageSender";
 
 const CameraCapture: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [capturedImage, setCaptureImage] = useState<string | null>(null);
   const [cameraStarted, setCameraStarted] = useState(false);
-  const [mqttClient, setMqttClient] = useState<mqtt.MqttClient | null>(null);
-  const [mqttConnected, setMqttConnected] = useState(false);
 
   const mqttBrokerUrl = process.env.MQTT_BROKER_URL ||
     "mqtt://test.mosquitto.org";
   const mqttTopic = process.env.MQTT_TOPIC || "image-topic";
+
+  const imageSender = new MqttImageSender(mqttTopic);
+  const uploadRequest = new UploadRequest(imageSender);
 
   const startCamera = async () => {
     try {
@@ -27,23 +28,6 @@ const CameraCapture: React.FC = () => {
     }
   };
 
-  const connectMqtt = () => {
-    const client = mqtt.connect(mqttBrokerUrl);
-    client.on("connect", () => {
-      setMqttClient(client);
-      setMqttConnected(true);
-    });
-    client.on("close", () => {
-      setMqttConnected(false);
-    });
-  };
-
-  useEffect(() => {
-    if (!mqttClient) {
-      connectMqtt();
-    }
-  }, [mqttClient]);
-
   const captureImage = () => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
@@ -57,17 +41,11 @@ const CameraCapture: React.FC = () => {
       const imageDataUrl = canvas.toDataURL("image/png");
       setCaptureImage(imageDataUrl);
     }
-
-    if (mqttClient) {
-      mqttClient.end();
-      setMqttClient(null);
-      setMqttConnected(false);
-    }
   };
 
   const saveImage = () => {
-    if (capturedImage && mqttClient) {
-      mqttClient.publish(mqttTopic, capturedImage);
+    if (capturedImage !== null) {
+      uploadRequest.upload(capturedImage);
     }
   };
 
@@ -75,9 +53,6 @@ const CameraCapture: React.FC = () => {
     <div>
       <h4>Camera Capture Interface</h4>
       <div>
-        {mqttConnected
-          ? <div style={{ color: "green" }}>&#128994;</div>
-          : <div style={{ color: "red" }}>&#128308;</div>}
         {!cameraStarted && <button onClick={startCamera}>Start Camera</button>}
         {cameraStarted && (
           <>
