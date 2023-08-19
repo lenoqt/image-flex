@@ -9,10 +9,9 @@ const CameraCapture: React.FC = () => {
   const [cameraStarted, setCameraStarted] = useState(false);
 
   const mqttBrokerUrl = process.env.MQTT_BROKER_URL ||
-    "mqtt://test.mosquitto.org";
+    "ws://public.mqtthq.com:8083/mqtt";
   const mqttTopic = process.env.MQTT_TOPIC || "image-topic";
-
-  const imageSender = new MqttImageSender(mqttTopic);
+  const imageSender = new MqttImageSender(mqttTopic, mqttBrokerUrl);
   const uploadRequest = new UploadRequest(imageSender);
 
   const startCamera = async () => {
@@ -51,41 +50,46 @@ const CameraCapture: React.FC = () => {
 
   return (
     <div>
-      <h4>Camera Capture Interface</h4>
-      <div>
-        {!cameraStarted && <button onClick={startCamera}>Start Camera</button>}
-        {cameraStarted && (
-          <>
-            <button style={{ marginRight: "110px" }} onClick={captureImage}>
-              Capture Image
-            </button>
-            <button onClick={saveImage} disabled={!capturedImage}>Save</button>
-          </>
-        )}
-      </div>
-      <div>
-        {capturedImage && (
-          <div>
-            <Image
-              src={capturedImage}
-              alt="Captured"
-              width={250}
-              height={250}
-            />
-            <a href={capturedImage} download="captured_image.png">
-              Download Captured Image
-            </a>
-          </div>
-        )}
-      </div>
-      <video
-        ref={videoRef}
-        style={{ display: cameraStarted ? "block" : "none" }}
-        autoPlay
-        muted
-        playsInline
-      />
-      <canvas ref={canvasRef} style={{ display: "none" }} />
+      <h1>Camera Capture Interface</h1>
+      <>
+        <div>
+          {!cameraStarted && <button onClick={startCamera}>Start Camera
+          </button>}
+          {cameraStarted && (
+            <>
+              <button style={{ marginRight: "110px" }} onClick={captureImage}>
+                Capture Image
+              </button>
+              <button onClick={saveImage} disabled={!capturedImage}>
+                Save
+              </button>
+            </>
+          )}
+        </div>
+        <div>
+          {capturedImage && (
+            <div>
+              <Image
+                src={capturedImage}
+                alt="Captured"
+                width={250}
+                height={250}
+              />
+              <a href={capturedImage} download="captured_image.png">
+                Download Captured Image
+              </a>
+            </div>
+          )}
+        </div>
+        <video
+          ref={videoRef}
+          style={{ display: cameraStarted ? "block" : "none" }}
+          autoPlay
+          muted
+          playsInline
+        />
+        <canvas ref={canvasRef} style={{ display: "none" }} />
+      </>
     </div>
   );
 };

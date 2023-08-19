@@ -9,14 +9,16 @@ interface ImageSender {
 export class MqttImageSender implements ImageSender {
   private client: mqtt.MqttClient | null = null;
   private topic: string;
+  private brokerUrl: string;
 
-  constructor(topic: string) {
+  constructor(topic: string, brokerUrl: string) {
     this.topic = topic;
+    this.brokerUrl = brokerUrl;
   }
 
   connect() {
-    const brokerUrl = "wss://test.mosquitto.org:8081";
-    this.client = mqtt.connect(brokerUrl);
+    
+    this.client = mqtt.connect(this.brokerUrl);
 
     return new Promise<void>((resolve, reject) => {
       this.client!.on("connect", () => {
