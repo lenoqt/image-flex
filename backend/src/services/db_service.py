@@ -1,7 +1,5 @@
-from dataclasses import field
-
 import sqlalchemy
-from attrs import define
+from attrs import define, field
 
 
 @define
@@ -17,7 +15,7 @@ class DatabaseBuilder:
         self.images = sqlalchemy.Table("images",
                           self.metadata,
                           sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-                          sqlalchemy.Column("image_data", sqlalchemy.String)
+                          sqlalchemy.Column("image_data", sqlalchemy.LargeBinary)
                                        )
 
     def init_db(self):
@@ -27,3 +25,9 @@ class DatabaseBuilder:
         with self.engine.connect() as conn:
             query = self.images.insert().values(image_data=image_data)
             conn.execute(query)
+
+    def get_image_by_id(self, image_id: int):
+        with self.engine.connect() as conn:
+            query = self.images.select().where(self.images.c.id == image_id)
+            result = conn.execute(query).fetchone()
+            return result.image_data if result else None

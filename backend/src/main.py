@@ -6,20 +6,16 @@ import uvicorn
 from fastapi import FastAPI
 from services.mqtt_service import MQTTService
 from services.db_service import DatabaseBuilder
+from api.images import router as images_router 
 
 logConfig("./logging.conf", disable_existing_loggers=False)
 logger = getLogger(__name__)
 
 
-def hello() -> str:
-    logger.info("Hello")
-    return "Hello"
 
 app = FastAPI()
 
-@app.get("/")
-async def root():
-    return hello()
+app.include_router(images_router)
 
 async def main():
     database = DatabaseBuilder("postgresql://postgres:example@localhost:5432/postgres")

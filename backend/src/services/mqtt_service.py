@@ -30,7 +30,6 @@ class MQTTService:
         self.client.subscribe(self.topic)
 
     def on_message(self, client, userdata, msg):
-        print("Message", msg.payload)
         self.image_save(msg.payload)
 
 
