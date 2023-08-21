@@ -13,9 +13,9 @@ class DatabaseBuilder:
         self.engine = sqlalchemy.create_engine(self.database_url)
         self.metadata = sqlalchemy.MetaData()
         self.images = sqlalchemy.Table("images",
-                          self.metadata,
-                          sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-                          sqlalchemy.Column("image_data", sqlalchemy.LargeBinary)
+                                       self.metadata,
+                                       sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
+                                       sqlalchemy.Column("image_data", sqlalchemy.LargeBinary)
                                        )
 
     def init_db(self):

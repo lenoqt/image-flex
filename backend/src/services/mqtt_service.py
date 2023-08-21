@@ -1,13 +1,12 @@
-from logging import getLogger
-from logging.config import fileConfig as logConfig
-
 import paho.mqtt.client as mqtt
 from attrs import define, field
-
+from logging import getLogger
+from logging.config import fileConfig as logConfig
 from services.db_service import DatabaseBuilder
 
 logConfig("./logging.conf", disable_existing_loggers=False)
 logger = getLogger(__name__)
+
 
 @define
 class MQTTService:
@@ -31,7 +30,6 @@ class MQTTService:
 
     def on_message(self, client, userdata, msg):
         self.image_save(msg.payload)
-
 
     def image_save(self, image_data):
         self.database.insert_image(image_data)
