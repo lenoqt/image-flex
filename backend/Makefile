@@ -20,7 +20,6 @@ local/lint/fix:
 local/run:
 	poetry run python src/main.py
 
-
 ############################################
 # COMMANDS TO RUN USING DOCKER (RECOMMENDED)
 ############################################
