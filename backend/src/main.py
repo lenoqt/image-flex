@@ -1,6 +1,5 @@
 import asyncio
 from logging import getLogger
-from logging.config import fileConfig as logConfig
 
 import uvicorn
 from api.images import router as images_router
@@ -9,7 +8,6 @@ from fastapi import FastAPI
 from services.mqtt_service import MQTTService
 from services.db_service import DatabaseBuilder
 
-logConfig("./logging.conf", disable_existing_loggers=False)
 logger = getLogger(__name__)
 
 app = FastAPI()
