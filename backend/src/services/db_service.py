@@ -5,6 +5,7 @@ from logging import getLogger
 
 logger = getLogger(__name__)
 
+
 @define
 class DatabaseBuilder:
     database_url: str

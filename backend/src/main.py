@@ -2,6 +2,7 @@ import asyncio
 from logging import getLogger
 
 import uvicorn
+import os
 from api.images import router as images_router
 from dynaconf import settings
 from fastapi import FastAPI
@@ -27,7 +28,8 @@ async def main():
     )
     mqtt_serv.start()
 
-    config = uvicorn.Config("main:app", host="0.0.0.0", port=3000)
+    port = os.getenv("PORT", 3000)
+    config = uvicorn.Config("main:app", host="0.0.0.0", port=port)
     server = uvicorn.Server(config)
     await server.serve()
 

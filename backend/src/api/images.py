@@ -6,6 +6,7 @@ router = APIRouter()
 
 logger = getLogger(__name__)
 
+
 @router.get("/images/{image_id}")
 async def get_image(image_id: int, db: DatabaseBuilder = Depends(get_database)):
     logger.info(f"Fetching image {image_id} from DB")
