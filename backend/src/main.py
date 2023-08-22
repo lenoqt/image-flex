@@ -28,7 +28,7 @@ async def main():
     )
     mqtt_serv.start()
 
-    port = os.getenv("PORT", 3000)
+    port = int(os.getenv("PORT", 3000))
     config = uvicorn.Config("main:app", host="0.0.0.0", port=port)
     server = uvicorn.Server(config)
     await server.serve()
