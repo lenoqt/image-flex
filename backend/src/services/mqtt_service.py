@@ -1,10 +1,8 @@
 import paho.mqtt.client as mqtt
 from attrs import define, field
 from logging import getLogger
-from logging.config import fileConfig as logConfig
 from services.db_service import DatabaseBuilder
 
-logConfig("./logging.conf", disable_existing_loggers=False)
 logger = getLogger(__name__)
 
 
@@ -29,6 +27,7 @@ class MQTTService:
         self.client.subscribe(self.topic)
 
     def on_message(self, client, userdata, msg):
+        logger.info(f"Received image from {client} - {userdata}")
         self.image_save(msg.payload)
 
     def image_save(self, image_data):
