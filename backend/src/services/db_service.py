@@ -1,7 +1,8 @@
+from logging import getLogger
+
 import sqlalchemy
 from attrs import define, field
 from dynaconf import settings
-from logging import getLogger
 
 logger = getLogger(__name__)
 
@@ -38,6 +39,12 @@ class DatabaseBuilder:
             query = self.images.select().where(self.images.c.id == image_id)
             result = conn.execute(query).fetchone()
             return result.image_data if result else None
+
+    def get_all_images(self):
+        with self.engine.connect() as conn:
+            query = self.images.select()
+            result = conn.execute(query).fetchall()
+            return result
 
 
 def get_database():

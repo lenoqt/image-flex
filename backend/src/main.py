@@ -6,6 +6,7 @@ import os
 from api.images import router as images_router
 from dynaconf import settings
 from fastapi import FastAPI
+from api.slack import router as slack_router
 from services.mqtt_service import MQTTService
 from services.db_service import DatabaseBuilder
 
@@ -14,6 +15,7 @@ logger = getLogger(__name__)
 app = FastAPI()
 
 app.include_router(images_router)
+app.include_router(slack_router)
 
 
 async def main():
