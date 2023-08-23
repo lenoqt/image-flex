@@ -19,6 +19,6 @@ class SlackService:
         image_data = base64.b64decode(image_data)
         image_io = io.BytesIO(image_data)
         try:
-            client.files_upload(channels=channel, file=image_io, filename=image_name)
+            client.files_upload_v2(channel=channel, file=image_io, filename=image_name)
         except SlackApiError as e:
             logger.error(f"Error uploading image: {e.response['error']}")
