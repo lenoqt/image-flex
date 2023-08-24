@@ -8,10 +8,10 @@ const CameraCapture: React.FC = () => {
   const [capturedImage, setCaptureImage] = useState<string | null>(null);
   const [cameraStarted, setCameraStarted] = useState(false);
 
-  const mqttBrokerUrl = process.env.NEXT_PUBLIC_MQTT_BROKER_URL;
-  const mqttTopic = process.env.NEXT_PUBLIC_MQTT_TOPIC;
-  const mqttUsername = process.env.NEXT_PUBLIC_MQTT_USERNAME;
-  const mqttPassword = process.env.NEXT_PUBLIC_MQTT_PASSWORD;
+  const mqttBrokerUrl = process.env.NEXT_PUBLIC_MQTT_BROKER_URL || "wss://example";
+  const mqttTopic = process.env.NEXT_PUBLIC_MQTT_TOPIC || "example/topic"; 
+  const mqttUsername = process.env.NEXT_PUBLIC_MQTT_USERNAME || "example";
+  const mqttPassword = process.env.NEXT_PUBLIC_MQTT_PASSWORD || "password";
 
   const imageSender = new MqttImageSender(mqttTopic, mqttBrokerUrl, mqttUsername, mqttPassword);
   const uploadRequest = new UploadRequest(imageSender);
