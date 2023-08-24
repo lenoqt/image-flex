@@ -1,6 +1,9 @@
+import random
+from logging import getLogger
+
 import paho.mqtt.client as mqtt
 from attrs import define, field
-from logging import getLogger
+
 from services.db_service import DatabaseBuilder
 
 logger = getLogger(__name__)
@@ -12,19 +15,26 @@ class MQTTService:
     broker_host: str
     broker_port: int
     topic: str
+    username: str
+    password: str
     database: DatabaseBuilder
 
     def __attrs_post_init__(self):
-        self.client = mqtt.Client()
-        self.client.enable_logger(logger)
+        client_id = f"fast-api-mqtt-{random.randint(0, 1000)}"
+        self.client = mqtt.Client(client_id=client_id, protocol=mqtt.MQTTv5)
+        self.client.tls_set("./certs/emqxsl-ca.crt")
+        self.client.username_pw_set(self.username, self.password)
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
 
-        self.client.connect(self.broker_host, self.broker_port, 60)
+        self.client.connect_async(self.broker_host, self.broker_port, keepalive=120)
 
-    def on_connect(self, client, userdata, flags, rc):
-        self.client.log_callback()
-        self.client.subscribe(self.topic)
+    def on_connect(self, client, userdata, flags, rc, properties=None):
+        if rc == 0 and client.is_connected():
+            client.subscribe(topic=self.topic, qos=0)
+            logger.info(f"Subscribed to {self.topic}")
+        else:
+            logger.error(f"Failed to subscribe: {rc}")
 
     def on_message(self, client, userdata, msg):
         logger.info(f"Received image from {client} - {userdata}")

@@ -26,11 +26,13 @@ async def main():
         broker_host=settings.MQTT_BROKER_HOST,
         broker_port=settings.MQTT_BROKER_PORT,
         topic=settings.MQTT_TOPIC,
+        username=settings.MQTT_USERNAME,
+        password=settings.MQTT_PASSWORD,
         database=database,
     )
     mqtt_serv.start()
 
-    port = int(os.getenv("PORT", 3000))
+    port = int(os.getenv("PORT", 5000))
     config = uvicorn.Config("main:app", host="0.0.0.0", port=port)
     server = uvicorn.Server(config)
     await server.serve()

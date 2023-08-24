@@ -10,15 +10,28 @@ export class MqttImageSender implements ImageSender {
   private client: mqtt.MqttClient | null = null;
   private topic: string;
   private brokerUrl: string;
+  private username: string;
+  private password: string;
 
-  constructor(topic: string, brokerUrl: string) {
+  constructor(
+    topic: string,
+    brokerUrl: string,
+    username: string,
+    password: string,
+  ) {
     this.topic = topic;
     this.brokerUrl = brokerUrl;
+    this.username = username;
+    this.password = password;
   }
 
   connect() {
-    
-    this.client = mqtt.connect(this.brokerUrl);
+    const clientId = "image-flex-" + Math.random().toString(16).substring(2, 8);
+    this.client = mqtt.connect(this.brokerUrl, {
+      clientId: clientId,
+      username: this.username,
+      password: this.password,
+    });
 
     return new Promise<void>((resolve, reject) => {
       this.client!.on("connect", () => {
@@ -35,8 +48,19 @@ export class MqttImageSender implements ImageSender {
 
   sendImage(imageData: string | Buffer) {
     if (this.client && this.client.connected) {
-      this.client.publish(this.topic, imageData);
-      console.info(`Message ${imageData} sent to ${this.topic}`);
+      this.client.subscribe(this.topic, { qos: 0 }, (error) => {
+        if (error) {
+          console.log("Subscribe error:", error);
+          return;
+        }
+        console.log(`Subscribed to topic ${this.topic}`);
+      });
+      this.client.publish(this.topic, imageData, { qos: 0 }, (error) => {
+        if (error) {
+          console.error(error);
+        }
+      });
+      console.log("SENT");
     } else {
       console.warn("MQTT client not connected");
     }

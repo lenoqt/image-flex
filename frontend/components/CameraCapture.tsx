@@ -9,9 +9,12 @@ const CameraCapture: React.FC = () => {
   const [cameraStarted, setCameraStarted] = useState(false);
 
   const mqttBrokerUrl = process.env.MQTT_BROKER_URL ||
-    "ws://public.mqtthq.com:8083/mqtt";
-  const mqttTopic = process.env.MQTT_TOPIC || "image-topic";
-  const imageSender = new MqttImageSender(mqttTopic, mqttBrokerUrl);
+    "wss://example.emqxsl.com:8084/mqtt";
+  const mqttTopic = process.env.MQTT_TOPIC || "/nodejs/mqtt";
+  const mqttUsername = process.env.MQTT_USERNAME || "example";
+  const mqttPassword = process.env.MQTT_PASSWORD || "example";
+
+  const imageSender = new MqttImageSender(mqttTopic, mqttBrokerUrl, mqttUsername, mqttPassword);
   const uploadRequest = new UploadRequest(imageSender);
 
   const startCamera = async () => {
