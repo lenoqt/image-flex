@@ -24,7 +24,7 @@ async def slack_commands(
             SlackService.upload_image_to_channel(
                 slack_token, slack_channel, image_data, f"image_{image_id}.png"
             )
-            return
+            return "Uploading image..."
         except ValueError:
             raise HTTPException(status_code=400, detail="Invalid Image ID")
     else:
