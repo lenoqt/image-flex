@@ -1,14 +1,14 @@
 import asyncio
+import os
 from logging import getLogger
 
 import uvicorn
-import os
 from api.images import router as images_router
+from api.slack import router as slack_router
 from dynaconf import settings
 from fastapi import FastAPI
-from api.slack import router as slack_router
-from services.mqtt_service import MQTTService
 from services.db_service import DatabaseBuilder
+from services.mqtt_service import MQTTService
 
 logger = getLogger(__name__)
 

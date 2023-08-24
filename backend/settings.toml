@@ -1,9 +1,9 @@
 [default]
 DATABASE_URL = "postgresql://postgres:example@localhost:5432/postgres"
-MQTT_BROKER_HOST = "example.emqxsl.com"
+MQTT_BROKER_HOST = "d92a17d6.ala.us-east-1.emqxsl.com"
 MQTT_BROKER_PORT = 8883
 MQTT_TOPIC = "/nodejs/mqtt"
-MQTT_USERNAME = "example"
+MQTT_USERNAME = "lenoqt"
 MQTT_PASSWORD = "example"
 PORT = 5000
 SLACK_CHANNEL_ID = "C05ND5BQECD"

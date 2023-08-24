@@ -2,7 +2,7 @@ import base64
 import io
 from logging import getLogger
 
-from attrs import define
+from attrs import define, field
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
@@ -11,14 +11,23 @@ logger = getLogger(__name__)
 
 @define
 class SlackService:
-    @staticmethod
-    def upload_image_to_channel(token, channel, image_data, image_name):
-        client = WebClient(token=token)
+    token: str = field()
+    client: WebClient = field(init=False, default=None)
+
+    def __attrs__post_init__(self):
+        self.client = WebClient(token=self.token)
+
+    def _decode_image_data(self, image_data):
         if image_data.startswith(b"data:image/png;base64,"):
             image_data = image_data.split(b",")[1]
-        image_data = base64.b64decode(image_data)
-        image_io = io.BytesIO(image_data)
+        return base64.b64decode(image_data)
+
+    def upload_image_to_channel(self, channel, image_data, image_name):
+        decoded_image = self._decode_image_data(image_data)
+        image_io = io.BytesIO(decoded_image)
         try:
-            client.files_upload_v2(channel=channel, file=image_io, filename=image_name)
+            self.client.files_upload_v2(
+                channel=channel, file=image_io, filename=image_name
+            )
         except SlackApiError as e:
             logger.error(f"Error uploading image: {e.response['error']}")

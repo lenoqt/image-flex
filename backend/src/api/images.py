@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, Depends
-from services.db_service import DatabaseBuilder, get_database
 from logging import getLogger
+
+from fastapi import APIRouter, Depends, HTTPException
+from services.db_service import DatabaseBuilder, get_database
 
 router = APIRouter()
 
