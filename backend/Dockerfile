@@ -14,4 +14,5 @@ COPY . .
 
 FROM dependencies AS production
 COPY src src
+COPY certs certs
 COPY settings.toml src
