@@ -1,16 +1,11 @@
 from dynaconf import settings
 from fastapi import APIRouter, Depends, Form, HTTPException
 from services.db_service import DatabaseBuilder, get_database
-from services.slack_service import SlackService
+from services.slack_service import SlackService, get_slack_service
 
-slack_token = settings.SLACK_API_TOKEN
 slack_channel = settings.SLACK_CHANNEL_ID
 
 router = APIRouter()
-
-
-def get_slack_service():
-    return SlackService(slack_token)
 
 
 @router.post("/slack/command")
